@@ -2,6 +2,12 @@ import { useEffect } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
 import { firebaseAuth } from './firebase';
 import useAuthStore from './store/authStore';
+import { Routes, Route } from 'react-router';
+
+import AuthPage from './pages/AuthPage';
+import AuthProtectedRoute from './AuthProtectedRoute';
+import DashboardPage from './pages/DashboardPage';
+import SettingsPage from './pages/SettingsPage';
 
 function App() {
  const { isInitialized, setUser, setInitialized } = useAuthStore();
@@ -19,7 +25,14 @@ function App() {
 
   return (
      <>
-      {isInitialized && <p>Welcome to the app!</p>}
+      {isInitialized && <Routes>
+        <Route path="/auth" element={<AuthPage />} />
+
+        <Route element={<AuthProtectedRoute />}>
+          <Route path="/" element={<DashboardPage />} />
+          <Route path="/settings" element={<SettingsPage />} />
+        </Route>
+      </Routes>}
 
       {!isInitialized && <p>Loading</p>}
     </>
