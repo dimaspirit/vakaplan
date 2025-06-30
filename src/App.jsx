@@ -25,6 +25,7 @@ function App() {
 
   return (
      <>
+     
       {isInitialized && <Routes>
         <Route path="/auth" element={<AuthPage />} />
 
