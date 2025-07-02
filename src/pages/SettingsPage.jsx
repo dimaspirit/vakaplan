@@ -1,10 +1,10 @@
 
-function DashboardPage() {
+function SettingsPage() {
   return (
     <>
-      <p>DashboardPage</p>
+      <p>SettingsPage</p>
     </>
   )
 }
 
-export default DashboardPage
+export default SettingsPage
