@@ -1,4 +1,4 @@
-import { Outlet, Navigate, useLocation } from "react-router";
+import { Outlet, Navigate } from "react-router";
 import useAuthStore from "./store/authStore";
 import { AppSidebar } from "./components/AppSidebar";
 
@@ -11,7 +11,6 @@ import { Separator } from "@/components/ui/separator"
 
 const AuthProtectedRoute = () => {
   const { user } = useAuthStore();
-  const { pathname } = useLocation();
 
   if(!user) <Navigate to="/auth" />;
 
