@@ -11,8 +11,8 @@ import { Separator } from "@/components/ui/separator"
 
 const AuthProtectedRoute = () => {
   const { user } = useAuthStore();
-
-  if(!user) <Navigate to="/auth" />;
+  console.log("AuthProtectedRoute user:", user, !user);
+  if(!user) return <Navigate to="/auth" />;
 
   return (
     <SidebarProvider>
