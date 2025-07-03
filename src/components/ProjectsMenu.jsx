@@ -15,13 +15,13 @@ export function ProjectsMenu() {
 
 
   useEffect(() => {
-    console.log("ProjectsMenu useEffect called");
     const fetchProjects = async () => {
       try {
         const projectsData = await getProjects();
+
         setProjects(projectsData.map(item => ({
-          id: item.id,
-          url: `/p/${item.id}`,
+          id: item.uid,
+          url: `/p/${item.uid}`,
           title: item.title,
         })));
       } catch (error) {

@@ -1,17 +1,22 @@
-import { Button } from './../components/ui/button';
-import { ProjectForm } from '../components/ProjectForm';
+import { useEffect } from 'react';
 import useAuthStore from '../store/authStore';
+import { ProjectForm } from '../components/ProjectForm';
 import { ApplicationForm } from '../components/ApplicationForm';
+import useProjectsStore from '../store/projectsStore';
 
 function DashboardPage() {
   const { user } = useAuthStore();
-  console.log("DashboardPage user:", user.uid);
+  const { sync, projects } = useProjectsStore();
+
+  useEffect(() => {
+    sync();
+  }, [sync]);
 
   return (
     <>
       <p>DashboardPage</p>
       {user && <ProjectForm createdBy={user.uid} />}
-      {/* <ApplicationForm /> */}
+      <ApplicationForm projects={projects} />
     </>
   )
 }

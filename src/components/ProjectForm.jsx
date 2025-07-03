@@ -17,12 +17,7 @@ import { Input } from "@/components/ui/input"
 
 import {
   Card,
-  CardAction,
   CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
 } from "@/components/ui/card"
 
 const formSchema = z.object({
@@ -32,31 +27,26 @@ const formSchema = z.object({
 });
 
 export function ProjectForm({createdBy}) {
-    console.log("ProjectForm createdBy:", createdBy);
-    const form = useForm({
-      resolver: zodResolver(formSchema),
-      defaultValues: {
-        title: "",
-      },
-    });
+  const form = useForm({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      title: "",
+    },
+  });
 
-    const onSubmit = (data) => {
-      console.log("Form submitted with data:", data);
+  const onSubmit = (data) => {
+    const handleCreateProject = async (data) => {
+      try {
+        const response = await createProject({...data, createdBy});
+        console.log("Project created with ID:", response);
+        form.reset();
+      } catch (error) {
+        console.error("Error creating project:", error);
+      }
+    };
 
-      const handleCreateProject = async (data) => {
-        try {
-          const response = await createProject({...data, createdBy});
-          console.log("Project created with ID:", response);
-          // Optionally, you can reset the form or show a success message
-          form.reset();
-        } catch (error) {
-          console.error("Error creating project:", error);
-          // Handle error, e.g., show an error message to the user
-        }
-      };
-      
-      handleCreateProject(data);
-    }
+    handleCreateProject(data);
+  }
 
   return (
     <Card className="w-full max-w-sm">
