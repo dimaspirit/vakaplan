@@ -1,3 +1,4 @@
+import {useState, useEffect} from "react";
 import {
   SidebarMenu,
   SidebarMenuButton,
@@ -6,18 +7,30 @@ import {
   SidebarGroupLabel,
 } from "@/components/ui/sidebar"
 import { NavLink, useLocation } from "react-router"
-
-
-const projects = [
-  {
-    id: 'Zero project',
-    url: '/p/0',
-    label: 'Zero sprint',
-  }
-]
+import { getProjects } from "../services/projects";
 
 export function ProjectsMenu() {
   const { pathname } = useLocation();
+  const [projects, setProjects] = useState([]);
+
+
+  useEffect(() => {
+    console.log("ProjectsMenu useEffect called");
+    const fetchProjects = async () => {
+      try {
+        const projectsData = await getProjects();
+        setProjects(projectsData.map(item => ({
+          id: item.id,
+          url: `/p/${item.id}`,
+          title: item.title,
+        })));
+      } catch (error) {
+        console.error("Failed to fetch projects:", error);
+      }
+    };
+
+    fetchProjects();
+  }, []);
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
@@ -31,7 +44,7 @@ export function ProjectsMenu() {
                   className={({ isActive }) =>
                     isActive ? "active" : ""
                   }
-                >{item.label}</NavLink>
+                >{item.title}</NavLink>
             </SidebarMenuButton>
         </SidebarMenuItem>
         ))}
