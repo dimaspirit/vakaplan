@@ -6,11 +6,11 @@ import useProjectsStore from '../store/projectsStore';
 
 function DashboardPage() {
   const { user } = useAuthStore();
-  const { sync, projects } = useProjectsStore();
+  const { syncProjects, projects } = useProjectsStore();
 
   useEffect(() => {
-    sync();
-  }, [sync]);
+    syncProjects();
+  }, [syncProjects]);
 
   return (
     <>

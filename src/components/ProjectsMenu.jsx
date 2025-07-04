@@ -8,36 +8,18 @@ import {
 } from "@/components/ui/sidebar"
 import { NavLink, useLocation } from "react-router"
 import { getProjects } from "../services/projects";
+import useProjectsStore from "../store/projectsStore";
 
 export function ProjectsMenu() {
   const { pathname } = useLocation();
-  const [projects, setProjects] = useState([]);
-
-
-  useEffect(() => {
-    const fetchProjects = async () => {
-      try {
-        const projectsData = await getProjects();
-
-        setProjects(projectsData.map(item => ({
-          id: item.uid,
-          url: `/p/${item.uid}`,
-          title: item.title,
-        })));
-      } catch (error) {
-        console.error("Failed to fetch projects:", error);
-      }
-    };
-
-    fetchProjects();
-  }, []);
+  const projects = useProjectsStore((state) => state.projects);
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
       <SidebarGroupLabel>Projects</SidebarGroupLabel>
       <SidebarMenu>
         {projects.map((item) => (
-          <SidebarMenuItem key={item.id}>
+          <SidebarMenuItem key={item.uid}>
             <SidebarMenuButton asChild isActive={pathname === item.url}>
                 <NavLink
                   to={item.url}

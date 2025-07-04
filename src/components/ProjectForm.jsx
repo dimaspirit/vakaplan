@@ -20,6 +20,8 @@ import {
   CardContent,
 } from "@/components/ui/card"
 
+import useProjectsStore from "../store/projectsStore"
+
 const formSchema = z.object({
   title: z.string().min(4, {
     message: "Title must be at least 4 characters.",
@@ -27,6 +29,7 @@ const formSchema = z.object({
 });
 
 export function ProjectForm({createdBy}) {
+  const { syncProjects } = useProjectsStore();
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -40,6 +43,7 @@ export function ProjectForm({createdBy}) {
         const response = await createProject({...data, createdBy});
         console.log("Project created with ID:", response);
         form.reset();
+        syncProjects();
       } catch (error) {
         console.error("Error creating project:", error);
       }

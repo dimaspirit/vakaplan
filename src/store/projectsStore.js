@@ -3,7 +3,7 @@ import { getProjects } from '../services/projects';
 
 const useProjectsStore = create((set) => ({
   projects: [],
-  sync: async () => {
+  syncProjects: async () => {
     const projects = await getProjects();
     set({ projects });
   },
