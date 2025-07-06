@@ -9,9 +9,11 @@ import AuthProtectedRoute from './AuthProtectedRoute';
 import DashboardPage from './pages/DashboardPage';
 import SettingsPage from './pages/SettingsPage';
 import ProjectPage from './pages/ProjectPage';
+import useProjectsStore from './store/projectsStore';
 
 function App() {
- const { isInitialized, setUser, setInitialized } = useAuthStore();
+ const { isInitialized, setUser, setInitialized, user } = useAuthStore();
+ const { syncProjects } = useProjectsStore();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(firebaseAuth, async(user) => {
@@ -22,7 +24,14 @@ function App() {
     return () => {
       unsubscribe();
     };
-  }, [setInitialized, setUser]);
+  }, [setInitialized, setUser]);  
+
+  useEffect(() => {
+    if(user) {
+      syncProjects();
+    }
+    
+  }, [user, syncProjects]);
 
   return (
      <div className="font-geist">

@@ -1,4 +1,3 @@
-import {useState, useEffect} from "react";
 import {
   SidebarMenu,
   SidebarMenuButton,
@@ -7,7 +6,6 @@ import {
   SidebarGroupLabel,
 } from "@/components/ui/sidebar"
 import { NavLink, useLocation } from "react-router"
-import { getProjects } from "../services/projects";
 import useProjectsStore from "../store/projectsStore";
 
 export function ProjectsMenu() {
@@ -15,14 +13,14 @@ export function ProjectsMenu() {
   const projects = useProjectsStore((state) => state.projects);
 
   return (
-    <SidebarGroup className="group-data-[collapsible=icon]:hidden">
+    <SidebarGroup>
       <SidebarGroupLabel>Projects</SidebarGroupLabel>
       <SidebarMenu>
         {projects.map((item) => (
           <SidebarMenuItem key={item.uid}>
-            <SidebarMenuButton asChild isActive={pathname === item.url}>
+            <SidebarMenuButton asChild isActive={pathname === `/p/${item.uid}`}>
                 <NavLink
-                  to={item.url}
+                  to={`/p/${item.uid}`}
                   className={({ isActive }) =>
                     isActive ? "active" : ""
                   }
