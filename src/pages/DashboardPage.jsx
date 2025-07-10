@@ -12,7 +12,6 @@ function DashboardPage() {
     <>
       <p>DashboardPage</p>
       {user && <ProjectForm createdBy={user.uid} />}
-      <ApplicationForm projects={projects} />
     </>
   )
 }

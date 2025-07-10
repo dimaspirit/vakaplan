@@ -5,9 +5,15 @@ import { test, expect  } from 'vitest';
 import { render } from '@testing-library/react';
 
 describe('Topbar', () => {
-  test('renders button "Add application"', () => {
+  test('renders "Toggle Sidebar" button', () => {
     const { getByText } = render(<SidebarProvider><Topbar /></SidebarProvider>);
-    const btnElement = getByText("Add Application");
+    const btnElement = getByText("Toggle Sidebar");
+    expect(btnElement).toBeDefined()
+  });
+
+  test('renders "Add application" button', () => {
+    const { getByText } = render(<SidebarProvider><Topbar /></SidebarProvider>);
+    const btnElement = getByText("Add application");
     expect(btnElement).toBeDefined()
   });
 });
