@@ -1,16 +1,33 @@
-import { collection, doc, setDoc, serverTimestamp  } from "firebase/firestore";
+import { collection, doc, setDoc, serverTimestamp,getDocs, getDoc, query, where  } from "firebase/firestore";
 import { firebaseDB } from '../firebase';
 
-const dbTableName = "applications"; // TODO: move to CONSTANTS file or env variable
+const dbTableName = "applications";
 
-export const createApplication = async({ position, title, url }) => {
+export const getProjects = async() => {
+  const querySnapshot = await getDocs(collection(firebaseDB, dbTableName));
+  return querySnapshot.docs.map(doc => ({ uid: doc.id, ...doc.data() }));
+};
+
+export const getApplications = async(userUID) => {
+  const q = query(collection(firebaseDB, dbTableName), where("createdBy", "==", userUID));
+  const querySnapshot = await getDocs(q);
+  return querySnapshot.docs.map(doc => ({ uid: doc.id, ...doc.data() }));
+};
+
+export const getApplicationByUID = async(uid) => {
+  const docRef = doc(firebaseDB, dbTableName, uid);
+  const docSnap = await getDoc(docRef);
+
+  if(docSnap.exists()) return docSnap.data()
+  return null;
+}
+
+export const createApplication = async(applicationData) => {
   const applicationRef = doc(collection(firebaseDB, dbTableName));
 
   try {
     await setDoc(applicationRef, {
-      url,
-      position,
-      title,
+      ...applicationData,
       uid: applicationRef.id,
       createdAt: serverTimestamp(),
     });
