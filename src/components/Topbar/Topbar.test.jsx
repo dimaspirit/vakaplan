@@ -13,7 +13,7 @@ describe('Topbar', () => {
 
   test('renders "Add application" button', () => {
     const { getByText } = render(<SidebarProvider><Topbar /></SidebarProvider>);
-    const btnElement = getByText("Add application");
+    const btnElement = getByText("Add an application");
     expect(btnElement).toBeDefined()
   });
 });
