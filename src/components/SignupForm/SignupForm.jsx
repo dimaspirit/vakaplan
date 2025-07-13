@@ -1,4 +1,3 @@
-import { useNavigate } from "react-router";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -23,12 +22,10 @@ import {
 } from "@/components/ui/form"
 
 import { formSchema } from "./schema";
-import { firebaseSignUp } from "@/services/auth"; 
 import useAuthStore from "../../store/authStore";
 
 
 export function SignupForm() {
-  const navigate = useNavigate();
   const signup = useAuthStore((state) => state.signup);
   
   const form = useForm({
@@ -41,13 +38,6 @@ export function SignupForm() {
 
   const onSubmit = (data) => {
     signup(data);
-    // firebaseSignUp(data)
-    //   .then(() => {
-        
-    //     // navigate("/");
-    //   }).catch(error => {
-    //     console.log(error);
-    //   });
   }
 
   return (
