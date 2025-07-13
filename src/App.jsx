@@ -1,19 +1,24 @@
 import { useEffect } from 'react';
-import { onAuthStateChanged } from 'firebase/auth';
+
 import { firebaseAuth } from './firebase';
-import useAuthStore from './store/authStore';
+import { onAuthStateChanged } from 'firebase/auth';
+
 import { Routes, Route } from 'react-router';
+import AuthProtectedRoute from './AuthProtectedRoute';
 
 import AuthPage from './pages/AuthPage';
-import AuthProtectedRoute from './AuthProtectedRoute';
 import DashboardPage from './pages/DashboardPage';
 import SettingsPage from './pages/SettingsPage';
 import ProjectPage from './pages/ProjectPage';
+
+import useAuthStore from './store/authStore';
 import useProjectsStore from './store/projectsStore';
+import useApplicationStore from './store/applicationStore';
 
 function App() {
- const { isInitialized, setUser, setInitialized, user } = useAuthStore();
- const { syncProjects } = useProjectsStore();
+  const { isInitialized, setUser, setInitialized, user } = useAuthStore();
+  const { syncProjects } = useProjectsStore();
+  const syncApplications = useApplicationStore((state) => state.syncApplications);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(firebaseAuth, async(user) => {
@@ -29,6 +34,7 @@ function App() {
   useEffect(() => {
     if(user) {
       syncProjects();
+      syncApplications(user.uid);
     }
   }, [user]);
 

@@ -1,12 +1,12 @@
-import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
-import { z } from "zod"
+import { zodResolver } from "@hookform/resolvers/zod"
 
-import useProjectsStore from "./../store/projectsStore"
+import useProjectsStore from "../../store/projectsStore";
+import useAuthStore from "../../store/authStore";
 
-import { Textarea } from "@/components/ui/textarea"
-
+import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import { Textarea } from "@/components/ui/textarea"
 import {
   Form,
   FormControl,
@@ -16,15 +16,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
 
 import {
   Select,
@@ -34,53 +25,36 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 
-import { createApplication } from "@/services/applications"
+import { formSchema } from "./schema";
+import useApplicationStore from "../../store/applicationStore";
 
-const formSchema = z.object({
-  companyName: z.string().min(4, {
-    message: "CompanyName must be at least 4 characters.",
-  }),
-  position: z.string().min(4, {
-    message: "Position must be at least 4 characters.",
-  }),
-  vacancyUrl: z.string().optional(),
-  project: z.string().min(1, {
-    message: "Project is required.",
-  }),
-  notes: z.string().optional(),
-});
-
-export function ApplicationForm() {
+export function ApplicationForm({ onSubmitForm }) {
+  const { user } = useAuthStore();
   const { projects } = useProjectsStore();
+  const createApplication = useApplicationStore((state) => state.createApplication);
 
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
       companyName: "",
-      position: "",
+      positionTitle: "",
       vacancyUrl: "",
-      project: projects.length > 0 ? projects[0].uid : "",
+      projectId: projects.length > 0 ? projects[0].uid : "",
       notes: "",
     },
   });
 
-  const onSubmit = (data) => {
-    console.log("Form submitted with data:", data);
-
-    createApplication({
-      title: data.companyName,
-      position: data.position,
-      url: data.vacancyUrl,
-    }).then((applicationId) => {
-      console.log("Application created with ID:", applicationId);
+  const onSubmit = async(data) => {
+    try {
+      await createApplication({...data, createdBy: user.uid});
       form.reset();
-    }).catch((error) => {
+      if (onSubmitForm) onSubmitForm();
+    } catch {
       console.error("Error creating application:", error);
-    }); 
+    }
   }
 
   return (
-
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <div className="flex flex-col gap-4 md:flex-row">
@@ -103,7 +77,7 @@ export function ApplicationForm() {
           <div className="md:basis-1/2">
             <FormField
               control={form.control}
-              name="position"
+              name="positionTitle"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Position</FormLabel>
@@ -119,7 +93,7 @@ export function ApplicationForm() {
 
         <FormField
           control={form.control}
-          name="project"
+          name="projectId"
           render={({ field }) => (
               <FormItem>
               <FormLabel>Project</FormLabel>
