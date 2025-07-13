@@ -1,18 +1,14 @@
 import { Outlet, Navigate } from "react-router";
-import useAuthStore from "./store/authStore";
-import { AppSidebar } from "./components/AppSidebar";
 
-import {
-  SidebarInset,
-  SidebarProvider,
-  SidebarTrigger,
-} from "@/components/ui/sidebar"
-import { Separator } from "@/components/ui/separator"
+import useAuthStore from "./store/authStore";
+
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 
 import { Topbar } from "./components/Topbar";
+import { AppSidebar } from "./components/AppSidebar";
 
 const AuthProtectedRoute = () => {
-  const { user } = useAuthStore();
+  const user = useAuthStore(state => state.user);
 
   if(!user) return <Navigate to="/auth" />;
 

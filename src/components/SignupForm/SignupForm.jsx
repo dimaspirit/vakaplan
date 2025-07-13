@@ -1,4 +1,7 @@
-import { useNavigate } from "react-router";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -7,11 +10,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
 
 import {
   Form,
@@ -23,20 +21,11 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 
-import { firebaseSignUp } from "@/services/auth"; 
-
-const formSchema = z.object({
-  email: z.string()
-    .min(1, { message: "This field has to be filled." })
-    .email("This is not a valid email."),
-  password: z.string()
-    .min(6, { message: "Password must be at least 6 characters long." })
-    .max(24, { message: "Password must be at most 24 characters long." }),  
-})
-
+import { formSchema } from "./schema";
+import useAuthStore from "../../store/authStore";
 
 export function SignupForm() {
-  const navigate = useNavigate();
+  const signup = useAuthStore((state) => state.signup);
   
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -44,22 +33,18 @@ export function SignupForm() {
       email: "",
       password: "",
     },
-  })
+  });
+
   const onSubmit = (data) => {
-    firebaseSignUp(data)
-      .then(() => {
-        navigate("/");
-      }).catch(error => {
-        console.log(error);
-      });
+    signup(data);
   }
 
   return (
     <div className="flex flex-col gap-6">
       <Card>
         <CardHeader className="text-center">
-          <CardTitle className="text-xl">Welcome again</CardTitle>
-          <CardDescription>Your journey continues here</CardDescription>
+          <CardTitle className="text-xl">Welcome</CardTitle>
+          <CardDescription>Your journey starts here</CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
@@ -77,13 +62,11 @@ export function SignupForm() {
                             <Input placeholder="example@mail.com" {...field} />
                           </FormControl>
                           <FormMessage />
-                          <FormDescription>
-                            Enter your email address to continue.
-                          </FormDescription>
                         </FormItem>
                       )}
                     />
                   </div>
+
                   <div className="grid gap-3">
                     <FormField
                       control={form.control}
@@ -93,16 +76,17 @@ export function SignupForm() {
                         <FormItem>
                           <FormLabel>Password</FormLabel>
                           <FormControl>
-                            <Input type="password" {...field} />
+                            <Input type="password" autoComplete="new-password" {...field} />
                           </FormControl>
                           <FormMessage />
                           <FormDescription>
-                            Be sure to use a strong password. Use min 6 characters and max 24 characters.
+                            Password must be at least 8 characters and contain an uppercase letter, a lowercase letter and a number.
                           </FormDescription>
                         </FormItem>
                       )}
                     />
                   </div>
+
                   <Button type="submit" className="w-full">
                     Signup
                   </Button>
