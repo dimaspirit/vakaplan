@@ -24,7 +24,6 @@ import {
 import { formSchema } from "./schema";
 import useAuthStore from "../../store/authStore";
 
-
 export function SignupForm() {
   const signup = useAuthStore((state) => state.signup);
   

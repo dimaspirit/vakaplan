@@ -12,13 +12,9 @@ import SettingsPage from './pages/SettingsPage';
 import ProjectPage from './pages/ProjectPage';
 
 import useAuthStore from './store/authStore';
-import useProjectsStore from './store/projectsStore';
-import useApplicationStore from './store/applicationStore';
 
 function App() {
   const { isInitialized, setUser, setInitialized, user } = useAuthStore();
-  const { syncProjects } = useProjectsStore();
-  const syncApplications = useApplicationStore((state) => state.syncApplications);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(firebaseAuth, async(user) => {
@@ -30,13 +26,6 @@ function App() {
       unsubscribe();
     };
   }, []);
-
-  useEffect(() => {
-    if(user) {
-      syncProjects();
-      syncApplications(user.uid);
-    }
-  }, [user]);
 
   return (
      <div className="font-geist">
