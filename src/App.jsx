@@ -24,14 +24,13 @@ function App() {
     return () => {
       unsubscribe();
     };
-  }, [setInitialized, setUser]);  
+  }, []);
 
   useEffect(() => {
     if(user) {
       syncProjects();
     }
-    
-  }, [user, syncProjects]);
+  }, [user]);
 
   return (
      <div className="font-geist">

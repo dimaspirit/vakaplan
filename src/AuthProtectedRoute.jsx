@@ -12,7 +12,7 @@ import { Separator } from "@/components/ui/separator"
 import { Topbar } from "./components/Topbar";
 
 const AuthProtectedRoute = () => {
-  const { user } = useAuthStore();
+  const user = useAuthStore(state => state.user);
 
   if(!user) return <Navigate to="/auth" />;
 

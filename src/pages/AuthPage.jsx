@@ -1,11 +1,17 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
+
+import { useNavigate } from "react-router";
 
 import { Button } from "@/components/ui/button"
 import { LoginForm } from "@/components/LoginForm"
 import { SignupForm } from "@/components/SignupForm"
+import useAuthStore from "../store/authStore"
 
 function AuthPage() {
+  const user = useAuthStore(state => state.user);
   const [authPage, setAuthPage] = useState("login");
+
+  const navigate = useNavigate();
 
   const changeAuthPageText = authPage === "login" ? "Do not have an account?" : "Already have an account?";
   const changeAuthPageTextTitle = authPage === "login" ? "Sign up" : "Login";
@@ -13,6 +19,12 @@ function AuthPage() {
   const toggleAuthPage = () => {
     setAuthPage((prevPage) => (prevPage === "login" ? "signup" : "login"));
   }
+
+  useEffect(() => {
+    if(user) {
+      navigate("/");
+    }
+  }, [user]);
 
   return (
     <div className="bg-muted flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
