@@ -7,6 +7,8 @@ import { LoginForm } from "@/components/LoginForm"
 import { SignupForm } from "@/components/SignupForm"
 import useAuthStore from "../store/authStore"
 
+import { AuthForm } from "@/components/AuthForm";
+
 function AuthPage() {
   const user = useAuthStore(state => state.user);
   const [authPage, setAuthPage] = useState("login");
@@ -26,6 +28,10 @@ function AuthPage() {
     }
   }, [user]);
 
+  const handleAuthProcess = (userCredentials) => {
+    console.log('handleAuthProcess', userCredentials);
+  }
+
   return (
     <div className="bg-muted flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
       <div className="flex w-full max-w-sm flex-col gap-6">
@@ -33,13 +39,16 @@ function AuthPage() {
           Vakaplan
         </a>
 
-        {authPage === "login" && <LoginForm />}
+        {/* {authPage === "login" && <LoginForm />}
         {authPage === "signup" && <SignupForm />}
         
         <div className="text-center text-sm">
           {changeAuthPageText}
           <Button variant="link" onClick={toggleAuthPage}>{changeAuthPageTextTitle}</Button>
-        </div>
+        </div> */}
+
+        
+        <AuthForm />
 
         <div className="text-muted-foreground *:[a]:hover:text-primary text-center text-xs text-balance *:[a]:underline *:[a]:underline-offset-4">
           By clicking continue, you agree to our <a href="#">Terms of Service</a>{" "}
