@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { firebaseSignUp } from '../services/auth';
+import { firebaseSignUp, firebaseSignOut } from '../services/auth';
 
 const useAuthStore = create((set) => ({
   user: null,
@@ -18,6 +18,18 @@ const useAuthStore = create((set) => ({
         emailVerified: user.emailVerified,
       }
     });
+  },
+  signout: async() => {
+    try {
+      await firebaseSignOut();
+      set({
+        isInitialized: true,
+        loading: false,
+        user: null,
+      });
+    } catch(error) {
+      throw new Error('Sign out is failed')
+    }
   },
   setLoading: (loading) => set({loading}),
   setInitialized: (isInitialized) => set({isInitialized}),
