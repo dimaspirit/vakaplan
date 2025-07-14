@@ -10,8 +10,7 @@ import { firebaseAuth } from '../firebase';
 setPersistence(firebaseAuth, browserLocalPersistence);
 
 export const firebaseSignIn = async({ email, password }) => {
-  const result = await signInWithEmailAndPassword(firebaseAuth, email, password);
-  return result;
+  return await signInWithEmailAndPassword(firebaseAuth, email, password);
 };
 
 export const firebaseSignUp = async({ email, password }) => {
