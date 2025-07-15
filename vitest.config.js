@@ -7,7 +7,6 @@ export default defineConfig({
   test: {
     watch: false,
     globals: true,
-    watch: false,
     environment: 'jsdom',
     setupFiles: ['./vitest-setup.js'],
   },
