@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { Loader2Icon } from "lucide-react";
+import { Loader2Icon, AlertCircleIcon } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -25,28 +25,37 @@ import {
 
 import useAuthStore from '../../store/authStore';
 import { formSchema } from "./schema";
-import { getOptionsByAuthType, defaultsFormValues } from "./constants";
+import { getAuthViewConfigByAuthType, defaultFormValues, AUTH_TYPES } from "./constants";
+
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+} from "@/components/ui/alert"
 
 export function AuthForm() {
   const authMethods = {
     login: useAuthStore(state => state.login),
     signup: useAuthStore(state => state.signup),
-  };
+  }
 
-  const [type, setType] = useState('login');
+  const [type, setType] = useState(AUTH_TYPES.LOGIN);
   const [isLoading, setIsLoading] = useState(false);
 
-  const options = getOptionsByAuthType(type);
+  const authViewConfig = useMemo(() => getAuthViewConfigByAuthType(type), [type]);
   const form = useForm({
     resolver: zodResolver(formSchema),
-    defaultValues: defaultsFormValues,
+    defaultValues: defaultFormValues,
   });
 
   const toggleAuthType = () => {
-    setType((prevState) => {
-      if(isLoading) return type;
-      return prevState === 'login' ? 'signup' : 'login'
-    })
+    if (isLoading) return;
+
+    setType(prevType => 
+      prevType === AUTH_TYPES.LOGIN ? AUTH_TYPES.SIGNUP : AUTH_TYPES.LOGIN
+    );
+    form.clearErrors(); 
+    form.reset();
   }
 
   const onSubmit = async(userCredentials) => {
@@ -55,23 +64,42 @@ export function AuthForm() {
     try {
       await authMethods[type](userCredentials);
     } catch(error) {
+      form.setError('root.serverError', {
+        type: error.code, // auth/email-already-in-use
+        message: 'This email is already in use. Déjà vu?'
+      });
+
+    } finally {
       setIsLoading(false);
-      console.error('AuthForm -> onSubmit error', error);
     }
   }
+
+  const serverErrorType = form.formState.errors?.root?.serverError?.type;
 
   return (
     <div className="flex flex-col gap-6">
       <Card>
         <CardHeader className="text-center">
-          <CardTitle className="text-xl">Welcome</CardTitle>
-          <CardDescription>Your journey starts here</CardDescription>
+          <CardTitle className="text-xl">{authViewConfig.welcomeLabel}</CardTitle>
+          <CardDescription>{authViewConfig.welcomeDescription}</CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
               <div className="grid gap-6">
                 <div className="grid gap-6">
+                  <div className="grid gap-3">
+                    {serverErrorType === 'auth/email-already-in-use' && (
+                      <Alert variant="destructive">
+                        <AlertCircleIcon />
+                        <AlertTitle>Déjà vu?</AlertTitle>
+                        <AlertDescription>
+                          <p>Looks like you've already signed up. Try logging in instead!</p>
+                        </AlertDescription>
+                      </Alert>
+                    )}
+                  </div>
+
                   <div className="grid gap-3">
                     <FormField
                       control={form.control}
@@ -80,7 +108,7 @@ export function AuthForm() {
                         <FormItem>
                           <FormLabel>Email</FormLabel>
                           <FormControl>
-                            <Input {...field} />
+                            <Input {...field} disabled={isLoading} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -91,26 +119,31 @@ export function AuthForm() {
                   <div className="grid gap-3">
                     <FormField
                       control={form.control}
-                      type="password"
                       name="password"
+                      type="password"
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Password</FormLabel>
                           <FormControl>
-                            <Input type="password" autoComplete={options.passwordAutoCompleteProp} {...field} />
+                            <Input {...field} type="password" autoComplete="new-password" disabled={isLoading} />
                           </FormControl>
                           <FormMessage />
                           <FormDescription>
-                            {options.passwordDescriptionLabel}
+                            {authViewConfig.passwordDescriptionLabel}
                           </FormDescription>
                         </FormItem>
                       )}
                     />
                   </div>
 
-                  <Button type="submit" className="w-full" disabled={isLoading}>
+                  <Button
+                    type="submit"
+                    className="w-full"
+                    disabled={isLoading}
+                    aria-busy={isLoading}
+                  >
                     {isLoading && <><Loader2Icon className="animate-spin" />Please wait</>}
-                    {!isLoading && options.btnLabel}
+                    {!isLoading && authViewConfig.btnLabel}
                   </Button>
                 </div>
               </div>
@@ -120,8 +153,8 @@ export function AuthForm() {
       </Card>
 
       <div className="text-center text-sm">
-        {options.changeAuthTypeDescription}
-        <Button variant="link" onClick={toggleAuthType}>{options.changeAuthTypeLabel}</Button>
+        {authViewConfig.changeAuthTypeDescription}
+        <Button variant="link" onClick={toggleAuthType}>{authViewConfig.changeAuthTypeLabel}</Button>
       </div>
     </div>
   )
