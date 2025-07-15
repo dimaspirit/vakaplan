@@ -7,9 +7,9 @@ export default defineConfig({
   test: {
     watch: false,
     globals: true,
-    watch: false,
     environment: 'jsdom',
     setupFiles: ['./vitest-setup.js'],
+    include: ['**/*.{test,spec}.{js,jsx,ts,tsx}'],
   },
   resolve: {
     alias: {
