@@ -1,26 +1,12 @@
 import { useState, useEffect } from "react"
-
 import { useNavigate } from "react-router";
 
-import { Button } from "@/components/ui/button"
-import { LoginForm } from "@/components/LoginForm"
-import { SignupForm } from "@/components/SignupForm"
-import useAuthStore from "../store/authStore"
-
+import useAuthStore from "@/store/authStore"
 import { AuthForm } from "@/components/AuthForm";
 
 function AuthPage() {
-  const user = useAuthStore(state => state.user);
-  const [authPage, setAuthPage] = useState("login");
-
   const navigate = useNavigate();
-
-  const changeAuthPageText = authPage === "login" ? "Do not have an account?" : "Already have an account?";
-  const changeAuthPageTextTitle = authPage === "login" ? "Sign up" : "Login";
-
-  const toggleAuthPage = () => {
-    setAuthPage((prevPage) => (prevPage === "login" ? "signup" : "login"));
-  }
+  const user = useAuthStore(state => state.user);
 
   useEffect(() => {
     if(user) {
@@ -28,25 +14,12 @@ function AuthPage() {
     }
   }, [user]);
 
-  const handleAuthProcess = (userCredentials) => {
-    console.log('handleAuthProcess', userCredentials);
-  }
-
   return (
     <div className="bg-muted flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
       <div className="flex w-full max-w-sm flex-col gap-6">
         <a href="#" className="flex items-center gap-2 self-center font-medium text-4xl">
           Vakaplan
         </a>
-
-        {/* {authPage === "login" && <LoginForm />}
-        {authPage === "signup" && <SignupForm />}
-        
-        <div className="text-center text-sm">
-          {changeAuthPageText}
-          <Button variant="link" onClick={toggleAuthPage}>{changeAuthPageTextTitle}</Button>
-        </div> */}
-
         
         <AuthForm />
 
