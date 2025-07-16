@@ -23,7 +23,7 @@ export const authViewConfig = {
     welcomeDescription: 'Your journey starts here',
     btnLabel: "Sign up",
     passwordAutoComplete: "new-password",
-    passwordDescription: "Password must be at least 8 characters and contain an uppercase letter, a lowercase letter, and a number",
+    passwordDescription: "Password must be at least 8 characters and contain an uppercase letter, a lowercase letter, and a number.",
     changeAuthTypeLabel: "Login",
     changeAuthTypeDescription: "Already have an account?",
   },

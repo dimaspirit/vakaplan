@@ -129,7 +129,7 @@ export function AuthForm() {
                           </FormControl>
                           <FormMessage />
                           <FormDescription>
-                            {authViewConfig.passwordDescriptionLabel}
+                            {authViewConfig.passwordDescription}
                           </FormDescription>
                         </FormItem>
                       )}
