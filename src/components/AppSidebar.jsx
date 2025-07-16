@@ -6,7 +6,6 @@ import {
 } from "@/components/ui/sidebar"
 
 import { AppMenu } from "./AppMenu";
-import { ProjectsMenu } from "./ProjectsMenu";
 
 export function AppSidebar({...props}) {
   return (
@@ -19,7 +18,6 @@ export function AppSidebar({...props}) {
 
       <SidebarContent>
         <AppMenu />
-        <ProjectsMenu />
       </SidebarContent>
 
       <SidebarFooter>

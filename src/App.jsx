@@ -9,7 +9,6 @@ import AuthProtectedRoute from './AuthProtectedRoute';
 import AuthPage from './pages/AuthPage';
 import DashboardPage from './pages/DashboardPage';
 import SettingsPage from './pages/SettingsPage';
-import ProjectPage from './pages/ProjectPage';
 
 import useAuthStore from './store/authStore';
 
@@ -35,7 +34,6 @@ function App() {
         <Route element={<AuthProtectedRoute />}>
           <Route path="/" element={<DashboardPage />} />
           <Route path="/settings" element={<SettingsPage />} />
-          <Route path="/p/:id" element={<ProjectPage />} />
         </Route>
       </Routes>}
 
