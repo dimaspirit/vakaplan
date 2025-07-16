@@ -1,7 +1,6 @@
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 
-import useProjectsStore from "../../store/projectsStore";
 import useAuthStore from "../../store/authStore";
 
 import { Input } from "@/components/ui/input"
@@ -17,20 +16,11 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-
 import { formSchema } from "./schema";
 import useApplicationStore from "../../store/applicationStore";
 
 export function ApplicationForm({ onSubmitForm }) {
   const { user } = useAuthStore();
-  const { projects } = useProjectsStore();
   const createApplication = useApplicationStore((state) => state.createApplication);
 
   const form = useForm({
@@ -39,7 +29,6 @@ export function ApplicationForm({ onSubmitForm }) {
       companyName: "",
       positionTitle: "",
       vacancyUrl: "",
-      projectId: projects.length > 0 ? projects[0].uid : "",
       notes: "",
     },
   });
@@ -90,34 +79,6 @@ export function ApplicationForm({ onSubmitForm }) {
             />
           </div>
         </div>
-
-        <FormField
-          control={form.control}
-          name="projectId"
-          render={({ field }) => (
-              <FormItem>
-              <FormLabel>Project</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a project" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {projects.map((project) => (
-                    <SelectItem key={project.uid} value={project.uid}>
-                      {project.title}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <FormDescription>
-                You can manage projects in the Projects section.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
 
         <FormField
           control={form.control}
