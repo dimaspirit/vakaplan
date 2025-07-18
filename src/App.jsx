@@ -27,7 +27,7 @@ function App() {
   }, []);
 
   return (
-     <div className="font-geist">
+     <>
       {isInitialized && <Routes>
         <Route path="/auth" element={<AuthPage />} />
 
@@ -38,7 +38,7 @@ function App() {
       </Routes>}
 
       {!isInitialized && <p>Loading</p>}
-    </div>
+    </>
   )
 }
 
