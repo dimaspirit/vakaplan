@@ -12,7 +12,6 @@ import { AppSidebar } from "./components/AppSidebar";
 const AuthProtectedRoute = () => {
   const user = useAuthStore(state => state.user);
   const syncApplications = useApplicationStore(state => state.syncApplications);
-
   useEffect(() => {
     if(user && user.uid) {
       syncApplications(user.uid);

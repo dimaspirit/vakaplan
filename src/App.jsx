@@ -13,7 +13,7 @@ import SettingsPage from './pages/SettingsPage';
 import useAuthStore from './store/authStore';
 
 function App() {
-  const { isInitialized, setUser, setInitialized, user } = useAuthStore();
+  const { isInitialized, setUser, setInitialized } = useAuthStore();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(firebaseAuth, async(user) => {
