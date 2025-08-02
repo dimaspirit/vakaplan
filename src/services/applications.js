@@ -37,3 +37,17 @@ export const createApplication = async(applicationData) => {
     throw new Error("Failed to create application");
   }
 };
+
+export const updateApplication = async (uid, updatedData) => {
+  const applicationRef = doc(firebaseDB, dbTableName, uid);
+
+  try {
+    await setDoc(applicationRef, {
+      ...updatedData,
+      updatedAt: serverTimestamp(),
+    }, { merge: true });
+  } catch (error) {
+    console.error("Error updating application:", error);
+    throw new Error("Failed to update application");
+  }
+};

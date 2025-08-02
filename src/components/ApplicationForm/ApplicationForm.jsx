@@ -1,18 +1,18 @@
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useEffect } from "react"
 
-import useAuthStore from "@/store/authStore";
-
+import useAuthStore from "@/store/authStore"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
+  FormDescription,
   FormMessage,
 } from "@/components/ui/form"
 import {
@@ -23,54 +23,74 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 
-import { formSchema } from "./schema";
-import useApplicationStore from "../../store/applicationStore";
+import { formSchema } from "./schema"
+import useApplicationStore from "../../store/applicationStore"
+import STATUSES from "../../status"
 
-import STATUSES from '../../status';
-
-export function ApplicationForm({ onSubmitForm }) {
-  const { user } = useAuthStore();
-  const createApplication = useApplicationStore((state) => state.createApplication);
+export function ApplicationForm({ mode = "edit", application = {}, onSubmitForm }) {
+  const { user } = useAuthStore()
+  const createApplication = useApplicationStore((state) => state.createApplication)
+  const updateApplication = useApplicationStore((state) => state.updateApplication)
 
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
       companyName: "",
       positionTitle: "",
+      projectTitle: "",
       status: STATUSES[0].id,
       vacancyUrl: "",
       notes: "",
+      description: "",
+      ...application,
     },
-  });
+  })
 
-  const onSubmit = async(data) => {
+  useEffect(() => {
+    if (mode !== "create") {
+      form.reset(application)
+    }
+  }, [application, mode, form])
+
+  const isView = mode === "view"
+  const isEdit = mode === "edit"
+  const isCreate = mode === "create"
+
+  const onSubmit = async (data) => {
+    console.log(application.id, data)
     try {
-      await createApplication({...data, createdBy: user.uid});
-      form.reset();
-      if (onSubmitForm) onSubmitForm();
-    } catch {
-      console.error("Error creating application:", error);
+      if (isCreate) {
+        await createApplication({ ...data, createdBy: user.uid })
+        form.reset();
+        onSubmitForm();
+      } else if (isEdit) {
+        await updateApplication(application.uid, data)
+      }
+    } catch (error) {
+      console.error("Error submitting application:", error)
     }
   }
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <div>
-          <FormField
-            control={form.control}
-            name="positionTitle"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Position</FormLabel>
-                <FormControl>
-                  <Input placeholder="Position Title" {...field} className={'md:text-xl md:h-10 font-semibold'} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
+        <FormField
+          control={form.control}
+          name="positionTitle"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Position</FormLabel>
+              <FormControl>
+                {isView ? (
+                  <p>{field.value}</p>
+                ) : (
+                  <Input placeholder="Position Title" {...field} disabled={isView} />
+                )}
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
         <div className="flex flex-col gap-4 md:flex-row">
           <div className="md:basis-1/2">
@@ -81,14 +101,17 @@ export function ApplicationForm({ onSubmitForm }) {
                 <FormItem>
                   <FormLabel>Company Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="Company Title" {...field} />
+                    {isView ? (
+                      <p>{field.value}</p>
+                    ) : (
+                      <Input placeholder="Company Name" {...field} disabled={isView} />
+                    )}
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
           </div>
-
           <div className="md:basis-1/2">
             <FormField
               control={form.control}
@@ -97,7 +120,11 @@ export function ApplicationForm({ onSubmitForm }) {
                 <FormItem>
                   <FormLabel>Project Title</FormLabel>
                   <FormControl>
-                    <Input placeholder="Project Title" {...field} />
+                    {isView ? (
+                      <p>{field.value}</p>
+                    ) : (
+                      <Input placeholder="Project Title" {...field} disabled={isView} />
+                    )}
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -114,20 +141,24 @@ export function ApplicationForm({ onSubmitForm }) {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Status</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value} >
-                    <FormControl>
-                      <SelectTrigger className="w-full">
-                        <SelectValue />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {STATUSES.map((status) => <SelectItem key={status.id} value={status.id}>{status.label}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                  {/* <FormDescription>
-                    You can manage statuses in your{" "}
-                    <Link href="/examples/forms">board settings</Link>.
-                  </FormDescription> */}
+                  {isView ? (
+                    <p>{STATUSES.find((s) => s.id === field.value)?.label}</p>
+                  ) : (
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger className="w-full">
+                          <SelectValue />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {STATUSES.map((status) => (
+                          <SelectItem key={status.id} value={status.id}>
+                            {status.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
                   <FormMessage />
                 </FormItem>
               )}
@@ -142,7 +173,13 @@ export function ApplicationForm({ onSubmitForm }) {
                 <FormItem>
                   <FormLabel>Vacancy URL</FormLabel>
                   <FormControl>
-                    <Input placeholder="Position Title" {...field} />
+                    {isView ? (
+                      <a href={field.value} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">
+                        {field.value}
+                      </a>
+                    ) : (
+                      <Input placeholder="Vacancy URL" {...field} disabled={isView} />
+                    )}
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -158,10 +195,14 @@ export function ApplicationForm({ onSubmitForm }) {
             <FormItem>
               <FormLabel>Description</FormLabel>
               <FormDescription>
-                Qualifications, Requirements, Responsibilities 
+                Qualifications, Requirements, Responsibilities
               </FormDescription>
               <FormControl>
-                <Textarea {...field} />
+                {isView ? (
+                  <p className="whitespace-pre-wrap">{field.value}</p>
+                ) : (
+                  <Textarea {...field} disabled={isView} />
+                )}
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -175,13 +216,20 @@ export function ApplicationForm({ onSubmitForm }) {
             <FormItem>
               <FormLabel>Notes</FormLabel>
               <FormControl>
-                <Textarea {...field} />
+                {isView ? (
+                  <p className="whitespace-pre-wrap">{field.value}</p>
+                ) : (
+                  <Textarea {...field} disabled={isView} />
+                )}
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        <Button type="submit">Add an application</Button>
+
+        {(isEdit || isCreate) && (
+          <Button type="submit">{isCreate ? "Add Application" : "Update Application"}</Button>
+        )}
       </form>
     </Form>
   )

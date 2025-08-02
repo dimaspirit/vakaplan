@@ -38,7 +38,7 @@ export function Topbar() {
                 <DialogTitle>Let's add an application</DialogTitle>
                 <DialogDescription>Fill out the details to start tracking a job you applied for.</DialogDescription>
               </DialogHeader>
-              <ApplicationForm onSubmitForm={handleClose} />
+              <ApplicationForm mode="create" onSubmitForm={handleClose} />
             </DialogContent>
           </Dialog>
         </div>

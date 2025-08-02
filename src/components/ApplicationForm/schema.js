@@ -7,6 +7,7 @@ export const formSchema = z.object({
   positionTitle: z.string().min(4, {
     message: "Positions title must be at least 4 characters.",
   }),
+  projectTitle: z.string().optional(),
   status: z.string().optional(),
   vacancyUrl: z.string().optional(),
   notes: z.string().optional(),
