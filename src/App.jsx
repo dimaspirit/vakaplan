@@ -13,7 +13,7 @@ import SettingsPage from './pages/SettingsPage';
 import useAuthStore from './store/authStore';
 
 function App() {
-  const { isInitialized, setUser, setInitialized, user } = useAuthStore();
+  const { isInitialized, setUser, setInitialized } = useAuthStore();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(firebaseAuth, async(user) => {
@@ -27,7 +27,7 @@ function App() {
   }, []);
 
   return (
-     <div className="font-geist">
+     <>
       {isInitialized && <Routes>
         <Route path="/auth" element={<AuthPage />} />
 
@@ -38,7 +38,7 @@ function App() {
       </Routes>}
 
       {!isInitialized && <p>Loading</p>}
-    </div>
+    </>
   )
 }
 

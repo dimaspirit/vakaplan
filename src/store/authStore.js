@@ -13,6 +13,7 @@ const useAuthStore = create((set) => ({
       isInitialized: true,
       loading: false,
       user: {
+        uid: user.uid,
         displayName: user.displayName,
         email: user.email,
         emailVerified: user.emailVerified,

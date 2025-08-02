@@ -2,11 +2,13 @@ import { z } from "zod"
 
 export const formSchema = z.object({
   companyName: z.string().min(4, {
-    message: "CompanyName must be at least 4 characters.",
+    message: "Company name  must be at least 4 characters.",
   }),
   positionTitle: z.string().min(4, {
-    message: "Position must be at least 4 characters.",
+    message: "Positions title must be at least 4 characters.",
   }),
+  projectTitle: z.string().optional(),
+  status: z.string().optional(),
   vacancyUrl: z.string().optional(),
   notes: z.string().optional(),
 });

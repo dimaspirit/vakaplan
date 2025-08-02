@@ -28,17 +28,17 @@ export function Topbar() {
         </div>
 
         <div className="flex items-center gap-2 px-4">
-          <Dialog open={open} onOpenChange={setOpen}>
+          <Dialog open={open} onOpenChange={setOpen} >
             <DialogTrigger asChild>
               <Button>Add an application</Button>
             </DialogTrigger>
 
-            <DialogContent className="md:min-w-2xl lg:min-w-4xl">
+            <DialogContent className="relative md:min-w-2xl lg:min-w-4xl">
               <DialogHeader>
                 <DialogTitle>Let's add an application</DialogTitle>
                 <DialogDescription>Fill out the details to start tracking a job you applied for.</DialogDescription>
               </DialogHeader>
-              <ApplicationForm onSubmitForm={handleClose} />
+              <ApplicationForm mode="create" onSubmitForm={handleClose} />
             </DialogContent>
           </Dialog>
         </div>
